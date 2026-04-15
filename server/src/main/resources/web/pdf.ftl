@@ -46,40 +46,23 @@
 </#if>
 
 <script type="text/javascript">
-    // 计算最终 PDF 地址（支持代理）
     var url = '${finalUrl}';
     var kkagent = '${kkagent}';
     var baseUrl = '${baseUrl}'.endsWith('/') ? '${baseUrl}' : '${baseUrl}' + '/';
     if (kkagent === 'true' || !url.startsWith(baseUrl)) {
         url = baseUrl + 'getCorsFile?urlPath=' + encodeURIComponent(Base64.encode(url)) + "&key=${kkkey}";
     }
-
-    // ========== 参数配置区（便于修改） ==========
-    var params = {
-        file: url,
-        disablepresentationmode: '${pdfPresentationModeDisable}',
-        disableopenfile: '${pdfOpenFileDisable}',
-        disableprint: '${pdfPrintDisable}',
-        disabledownload: '${pdfDownloadDisable}',
-        disablebookmark: '${pdfBookmarkDisable}',
-        disableediting: '${pdfDisableEditing}',
-        pdfhighlightall: '${pdfhighlightAll}',
-        watermarktxt: '${watermarkTxt}',
-        pagemode: 'thumbs'   // 缩略图模式
-    };
-    // ===========================================
-
-    // 使用原生 JS 构建查询字符串
-    var queryString = Object.keys(params)
-        .map(function(key) {
-            return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-        })
-        .join('&');
-
-    // 构建完整 viewer URL（保留锚点 #page）
-    var viewerUrl = baseUrl + "pdfjs/web/viewer.html?" + queryString + "#page=${page}";
-
-    // 设置 iframe 地址
+    var viewerUrl = baseUrl + "pdfjs/web/viewer.html?file=" + encodeURIComponent(url);
+    viewerUrl += "&disablepresentationmode=${pdfPresentationModeDisable}";
+    viewerUrl += "&disableopenfile=${pdfOpenFileDisable}";
+    viewerUrl += "&disableprint=${pdfPrintDisable}";
+    viewerUrl += "&disabledownload=${pdfDownloadDisable}";
+    viewerUrl += "&disablebookmark=${pdfBookmarkDisable}";
+    viewerUrl += "&disableediting=${pdfDisableEditing}";
+    viewerUrl += "&pdfhighlightall=${highlightall}";
+    viewerUrl += "&watermarktxt=${watermarkTxt}";
+	 viewerUrl += "&pagemode=thumbs";       // 作为查询参数
+    viewerUrl += "#page=${page?js_string}"; // hash 放在最后
     var iframe = document.getElementById('pdfFrame');
     iframe.src = viewerUrl;
 
