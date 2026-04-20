@@ -23,8 +23,9 @@ public class CacheServiceRedisImpl implements CacheService {
 
     private final RedissonClient redissonClient;
 
-    public CacheServiceRedisImpl(Config config) {
-        this.redissonClient = Redisson.create(config);
+    // 直接注入 RedissonClient，而不是 Config
+    public CacheServiceRedisImpl(RedissonClient redissonClient) {
+        this.redissonClient = redissonClient;
     }
 
     @Override
