@@ -193,11 +193,10 @@ public class OnlinePreviewController {
         logger.info("读取跨域文件url：{}", urlPath);
 
         if (!isFtpUrl(url)) {
-            // HTTP/HTTPS 处理
-            try (CloseableHttpClient httpClient = HttpRequestUtils.createConfiguredHttpClient()) {
+            // HTTP/HTTPS 处理（修复：不关闭共享的 CloseableHttpClient）
+            CloseableHttpClient httpClient = HttpRequestUtils.createConfiguredHttpClient();
+            try {
                 HttpRequestUtils.executeHttpRequest(url, httpClient, fileAttribute, responseWrapper -> {
-                    // 如果响应状态码不是 2xx，可以提前抛出异常（executeHttpRequest 内部可能已经处理）
-                    // 这里直接复制流
                     IOUtils.copy(responseWrapper.getInputStream(), response.getOutputStream());
                 });
             } catch (HttpClientErrorException e) {
@@ -219,8 +218,6 @@ public class OnlinePreviewController {
                 } catch (IOException ignored) {
                 }
             }
-            // 注意：httpClient 可能需要关闭，但 executeHttpRequest 内部应该已管理其生命周期
-            // 如果 executeHttpRequest 未关闭 client，可在此关闭
         } else {
             // FTP 处理
             InputStream inputStream = null;
