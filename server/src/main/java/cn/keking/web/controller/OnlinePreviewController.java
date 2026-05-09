@@ -196,9 +196,7 @@ public class OnlinePreviewController {
             // HTTP/HTTPS 处理（修复：不关闭共享的 CloseableHttpClient）
             CloseableHttpClient httpClient = HttpRequestUtils.createConfiguredHttpClient();
             try {
-                HttpRequestUtils.executeHttpRequest(url, httpClient, fileAttribute, responseWrapper -> {
-                    IOUtils.copy(responseWrapper.getInputStream(), response.getOutputStream());
-                });
+                HttpRequestUtils.executeHttpRequest(url, httpClient, fileAttribute, responseWrapper -> IOUtils.copy(responseWrapper.getInputStream(), response.getOutputStream()));
             } catch (HttpClientErrorException e) {
                 // 捕获 HTTP 4xx 错误（如 404）
                 logger.error("HTTP 请求失败，状态码：{}，url：{}", e.getStatusCode(), urlPath);
